@@ -2,6 +2,7 @@ package com.sainsbury.scraper.service;
 
 import com.sainsbury.scraper.dto.Result;
 import com.sainsbury.scraper.dto.Total;
+import com.sainsbury.scraper.exception.ObtainingDocumentException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,6 +15,18 @@ import org.jsoup.select.Elements;
 
 @Log
 public class Service {
+
+    private static final String URL = "https://jsainsburyplc.github.io/serverside-test/site/www.sainsburys.co.uk/webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html";
+
+    public Document obtainDocument(){
+        try {
+            Document doc = Jsoup.connect(URL).get();
+            return Jsoup.parse(doc.toString());
+        } catch (IOException e ) {
+            log.warning("ERROR OCCURRED WHILE TRYING TO OBTAIN ".concat(URL));
+            throw new ObtainingDocumentException();
+        }
+    }
 
     public Total calculateTotal(List<Result> productsInfo) {
         BigDecimal gross = new BigDecimal("0");
